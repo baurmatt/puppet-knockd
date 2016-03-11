@@ -39,7 +39,7 @@ class knockd (
 	$interface = $knockd::params::interface,
 ) inherits knockd::params {
 
-	if interface == undef {
+	if $interface == undef {
 		fail("Please specify a valid interface.")
 	}
 
