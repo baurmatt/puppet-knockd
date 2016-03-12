@@ -37,20 +37,20 @@ class knockd (
 	$logfile = $knockd::params::logfile,
 	$pidfile = $knockd::params::pidfile,
 	$interface = $knockd::params::interface,
+  $sequences = {},
 ) inherits knockd::params {
 
 	if $interface == undef {
 		fail("Please specify a valid interface.")
 	}
 
-	if $::osfamily == Debian {
-		file { "/etc/default/knockd":
-			ensure  => present,
-			owner   => $knockd::params::default_owner,
-			group   => $knockd::params::default_group,
-			mode    => '0644',
-			content => "START_KNOCKD=1\n",
-		}
+	if $::osfamily == 'Debian' {
+    file_line { 'enable_knockd_startup':
+      path   => '/etc/default/knockd',
+      line   => 'START_KNOCKD=1',
+      match  => 'START_KNOCKD=0',
+      before => Service[$knockd::params::service_name],
+    }
 	}
 
 	package { $knockd::params::package_name:
@@ -81,4 +81,6 @@ class knockd (
 		subscribe  => File[$knockd::params::config_file],
 		require    => [Package[$knockd::params::package_name], File[$knockd::params::config_file]],
 	}
+
+  create_resources('knockd::sequence', $sequences)
 }
