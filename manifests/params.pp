@@ -21,13 +21,13 @@ class knockd::params {
 	$cmd_timeout = undef
 
 	case $::kernel {
-		FreeBSD: {
+		'FreeBSD': {
 			$config_file = '/usr/local/etc/knockd.conf'
 			$default_owner = 'root'
 			$default_group = 'wheel'
 			$package_name = 'knock'
 		}
-		Linux,default: {
+		'Linux',default: {
 			$config_file = '/etc/knockd.conf'
 			$default_owner = 'root'
 			$default_group = 'root'
