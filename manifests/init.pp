@@ -58,19 +58,22 @@ class knockd (
 	}
 
 	concat { $knockd::params::config_file:
-		owner   => $knockd::params::default_owner,
-		group   => $knockd::params::default_group,
-		mode    => '0740',
+		owner  => $knockd::params::default_owner,
+		group  => $knockd::params::default_group,
+		mode   => '0740',
+    notify => Service[$knockd::params::service_name]
 	}
 	concat::fragment{ 'knockd_config_header':
-		target => $knockd::params::config_file,
+		target  => $knockd::params::config_file,
 		content => template('knockd/knockd.conf.erb'),
-		order => '00',
+		order   => '00',
+    notify  => Service[$knockd::params::service_name]
 	}
 	concat::fragment{ 'knockd_config_footer':
 		target  => $knockd::params::config_file,
 		content => "",
 		order   => '99',
+    notify  => Service[$knockd::params::service_name]
 	}
 
 	service { $knockd::params::service_name:
@@ -78,9 +81,10 @@ class knockd (
 		enable     => true,
 		hasstatus  => false,
 		hasrestart => true,
-		subscribe  => File[$knockd::params::config_file],
-		require    => [Package[$knockd::params::package_name], File[$knockd::params::config_file]],
+		require    => Package[$knockd::params::package_name],
 	}
 
   create_resources('knockd::sequence', $sequences)
+
+  Knockd::Sequence<| |> ~> Service[$knockd::params::service_name]
 }
