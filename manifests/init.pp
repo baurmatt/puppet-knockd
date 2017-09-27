@@ -48,7 +48,7 @@ class knockd (
     file_line { 'enable_knockd_startup':
       path   => '/etc/default/knockd',
       line   => 'START_KNOCKD=1',
-      match  => 'START_KNOCKD=0',
+      match  => 'START_KNOCKD=.*',
       before => Service[$knockd::params::service_name],
     }
 	}
